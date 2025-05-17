@@ -1,1 +1,14 @@
-// frontend Dockerfile
+FROM node:20-alpine
+
+# 作業ディレクトリの作成
+WORKDIR /app
+
+# 依存ファイルをコピー
+COPY ../frontend/package.json ../frontend/yarn.lock ./
+RUN yarn install
+
+# ソースコードをコピー
+COPY ../frontend/ ./
+
+# ビルド(develop)
+CMD ["yarn", "dev"]

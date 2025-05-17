@@ -1,1 +1,21 @@
-// backend Dockerfile
+FROM go.lang:1.20-alpine
+
+# 必要なツールのインストール
+# Alpine Linux（GoのDocker公式イメージがベースにしてる軽量Linux）で、git と bash を追加でインストールする
+# git:Goのモジュール取得時に git clone されることがあるため
+# bash:Goのモジュール取得時に bash スクリプトが実行されることがあるため
+RUN apk update && apk add --no-cache git bash
+
+# 作業ディレクトリの作成
+WORKDIR /app
+
+#  go.modとgo.sumをコピー
+COPY ../backend/go.mod ../backend/go.sum ./
+RUN go mod download
+
+# ソースコードをコピー
+COPY ../backend/ ./
+
+# ビルド go run cmd/main.go
+# ビルド済みバイナリは作らずに、main.goをその場で解釈・コンパイルして即時実行するという 「開発用の簡易実行」スタイル
+CMD ["go", "run" , "cmd/main.go"]
