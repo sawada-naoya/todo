@@ -13,6 +13,7 @@ func main() {
 	e := echo.New()
 
 	// Wireを使って依存関係を注入し、*handler.TaskHandler を取得する
+	// Wireにより、main関数では1行で依存注入されたTaskHandlerを取得できる
 	h := wire.InitializeHandler()
 
 	// ルーティングを初期化して、各エンドポイントにハンドラをバインドする
