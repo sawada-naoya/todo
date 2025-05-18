@@ -34,3 +34,12 @@ func NewMySQL() (*sql.DB, error) {
 
 	return db, nil
 }
+
+// NewMySQLをラップして、失敗時にpanicで即落ちする
+func MustConnectMySQL() *sql.DB {
+	db, err := NewMySQL()
+	if err != nil {
+		panic(err)
+	}
+	return db
+}
