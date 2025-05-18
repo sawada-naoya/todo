@@ -5,6 +5,8 @@ import (
 	"github.com/sawada-naoya/todo/backend/internal/handler"
 )
 
+// InitRouterは全ルーティングを定義するエントリーポイント
+// handler層（DI済み）を受け取り、Echoにルーティングをバインドする
 func InitRouter(e *echo.Echo, h *handler.TaskHandler) {
 	// タスク一覧取得
 	e.GET("/tasks", h.GetAllTasksHandler)
