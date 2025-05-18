@@ -9,8 +9,8 @@ services:
       MYSQL_DATABASE: todo
       MYSQL_USER: user
       MYSQL_PASSWORD: password
-    ports:
-      - "3306:3306"
+    # ports:
+    #   - "3306:3306"
     # mysql-data という名前付きボリュームを作成して、MySQLコンテナ内の /var/lib/mysql（データ保存先）と接続
     volumes:
       - mysql_data:/var/lib/mysql
@@ -21,9 +21,9 @@ services:
       retries: 5
   backend:
     build:
-      # Dockerイメージのビルドに使うコンテキスト（＝ファイルの起点）が .（現在のディレクトリ）
-      context: .
-      dockerfile: docker/Dockerfile.backend
+      # Dockerイメージのビルドに使うコンテキスト（＝ファイルの起点）にbackendディレクトリを指定
+      context: ./backend
+      dockerfile: ../docker/Dockerfile.backend
     ports:
       - "8080:8080"
     volumes:
@@ -40,8 +40,8 @@ services:
       - DB_NAME=todo
   frontend:
     build:
-      context: .
-      dockerfile: docker/Dockerfile.frontend
+      context: ./frontend
+      dockerfile: ../docker/Dockerfile.frontend
     ports:
       - "3000:3000"
     volumes:

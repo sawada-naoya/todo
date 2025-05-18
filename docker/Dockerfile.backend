@@ -1,4 +1,4 @@
-FROM go.lang:1.20-alpine
+FROM golang:1.21-alpine
 
 # 必要なツールのインストール
 # Alpine Linux（GoのDocker公式イメージがベースにしてる軽量Linux）で、git と bash を追加でインストールする
@@ -10,11 +10,11 @@ RUN apk update && apk add --no-cache git bash
 WORKDIR /app
 
 #  go.modとgo.sumをコピー
-COPY ../backend/go.mod ../backend/go.sum ./
+COPY go.mod go.sum ./
 RUN go mod download
 
 # ソースコードをコピー
-COPY ../backend/ ./
+COPY . .
 
 # ビルド go run cmd/main.go
 # ビルド済みバイナリは作らずに、main.goをその場で解釈・コンパイルして即時実行するという 「開発用の簡易実行」スタイル
