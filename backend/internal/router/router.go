@@ -15,7 +15,7 @@ func InitRouter(e *echo.Echo, h *handler.TaskHandler) {
 	// タスク登録
 	e.POST("/tasks", h.CreateTaskHandler)
 	// タスク更新
-	e.PUT("/tasks/:id", h.UpdateTaskHandler)
+	e.PATCH("/tasks/:id", h.UpdateTaskHandler)
 	// タスク削除
 	e.DELETE("/tasks/:id", h.DeleteTaskHandler)
 }

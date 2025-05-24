@@ -1,4 +1,4 @@
-FROM golang:1.21-alpine
+FROM golang:1.23-alpine
 
 # 必要なツールのインストール
 # Alpine Linux（GoのDocker公式イメージがベースにしてる軽量Linux）で、git と bash を追加でインストールする

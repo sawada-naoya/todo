@@ -1,17 +1,17 @@
 package usecase
 
 import (
-	domain "github.com/sawada-naoya/todo/backend/internal/domain"
+	models "github.com/sawada-naoya/todo/backend/internal/models"
 	repository "github.com/sawada-naoya/todo/backend/internal/repository"
 )
 
 // TaskUsecaseはタスクに関するユースケースのインターフェースを定義する
 // ハンドラー層から呼び出され、ビジネスロジックを担う
 type TaskUsecase interface {
-	GetAllTasks() ([]domain.Task, error)
-	GetTask(id int) (*domain.Task, error)
-	CreateTask(task *domain.Task) error
-	UpdateTask(task *domain.Task) error
+	GetAllTasks() ([]models.Task, error)
+	GetTask(id int) (*models.Task, error)
+	CreateTask(task *models.Task) error
+	UpdateTask(id int, isDone bool) error
 	DeleteTask(id int) error
 }
 
@@ -27,23 +27,23 @@ func NewTaskUsecase(repo repository.TaskRepository) TaskUsecase {
 }
 
 // 全タスクを取得して返すユースケース処理
-func (u *taskUsecase) GetAllTasks() ([]domain.Task, error) {
+func (u *taskUsecase) GetAllTasks() ([]models.Task, error) {
 	return u.repo.GetAll()
 }
 
 // 指定されたIDのタスクを取得して返すユースケース処理
-func (u *taskUsecase) GetTask(id int) (*domain.Task, error) {
+func (u *taskUsecase) GetTask(id int) (*models.Task, error) {
 	return u.repo.FindByID(id)
 }
 
 // 新しいタスクを作成して登録するユースケース処理
-func (u *taskUsecase) CreateTask(task *domain.Task) error {
+func (u *taskUsecase) CreateTask(task *models.Task) error {
 	return u.repo.Create(task)
 }
 
 // 既存のタスク情報を更新するユースケース処理
-func (u *taskUsecase) UpdateTask(task *domain.Task) error {
-	return u.repo.Update(task)
+func (u *taskUsecase) UpdateTask(id int, isDone bool) error {
+	return u.repo.UpdateIsDone(id, isDone)
 }
 
 // 指定されたIDのタスクを削除するユースケース処理

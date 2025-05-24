@@ -3,7 +3,7 @@ package repository
 import (
 	"database/sql"
 
-	"github.com/sawada-naoya/todo/backend/internal/domain"
+	"github.com/sawada-naoya/todo/backend/internal/models"
 )
 
 // TaskRepositoryはタスクに関するデータ操作の契約（interface）を定義する
@@ -15,10 +15,10 @@ import (
 // - Delete: 削除
 
 type TaskRepository interface {
-	GetAll() ([]domain.Task, error)
-	FindByID(id int) (*domain.Task, error)
-	Create(task *domain.Task) error
-	Update(task *domain.Task) error
+	GetAll() ([]models.Task, error)
+	FindByID(id int) (*models.Task, error)
+	Create(task *models.Task) error
+	UpdateIsDone(id int, isDone bool) error
 	Delete(id int) error
 }
 
@@ -32,16 +32,16 @@ func NewTaskRepository(db *sql.DB) TaskRepository {
 }
 
 // GetAllはtasksテーブルからすべてのタスクを取得する
-func (r *taskRepository) GetAll() ([]domain.Task, error) {
+func (r *taskRepository) GetAll() ([]models.Task, error) {
 	rows, err := r.db.Query("SELECT id, title, is_done, created_at, updated_at FROM tasks")
 	if err != nil {
 		return nil, err
 	}
 	defer rows.Close()
 
-	tasks := []domain.Task{}
+	tasks := []models.Task{}
 	for rows.Next() {
-		var t domain.Task
+		var t models.Task
 		if err := rows.Scan(&t.ID, &t.Title, &t.IsDone, &t.CreatedAt, &t.UpdatedAt); err != nil {
 			return nil, err
 		}
@@ -51,9 +51,9 @@ func (r *taskRepository) GetAll() ([]domain.Task, error) {
 }
 
 // FindByIDは指定されたIDのタスクを1件取得する
-func (r *taskRepository) FindByID(id int) (*domain.Task, error) {
+func (r *taskRepository) FindByID(id int) (*models.Task, error) {
 	row := r.db.QueryRow("SELECT id, title, is_done, created_at, updated_at FROM tasks WHERE id = ?", id)
-	var t domain.Task
+	var t models.Task
 	if err := row.Scan(&t.ID, &t.Title, &t.IsDone, &t.CreatedAt, &t.UpdatedAt); err != nil {
 		return nil, err
 	}
@@ -61,14 +61,17 @@ func (r *taskRepository) FindByID(id int) (*domain.Task, error) {
 }
 
 // Createは新しいタスクをtasksテーブルに挿入する
-func (r *taskRepository) Create(task *domain.Task) error {
+func (r *taskRepository) Create(task *models.Task) error {
 	_, err := r.db.Exec("INSERT INTO tasks (title, is_done) VALUES (?, ?)", task.Title, task.IsDone)
 	return err
 }
 
 // Updateは既存のタスクの内容を更新する
-func (r *taskRepository) Update(task *domain.Task) error {
-	_, err := r.db.Exec("UPDATE tasks SET title = ?, is_done = ?, updated_at = CURRENT_TIMESTAMP WHERE id = ?", task.Title, task.IsDone, task.ID)
+func (r *taskRepository) UpdateIsDone(id int, isDone bool) error {
+	_, err := r.db.Exec(
+		"UPDATE tasks SET is_done = ?, updated_at = CURRENT_TIMESTAMP WHERE id = ?",
+		isDone, id,
+	)
 	return err
 }
 
