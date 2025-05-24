@@ -5,7 +5,7 @@ import (
 	"strconv"
 
 	"github.com/labstack/echo/v4"
-	"github.com/sawada-naoya/todo/backend/internal/domain"
+	"github.com/sawada-naoya/todo/backend/internal/models"
 	"github.com/sawada-naoya/todo/backend/internal/usecase"
 )
 
@@ -46,7 +46,7 @@ func (h *TaskHandler) GetTaskHandler(c echo.Context) error {
 
 // リクエストBodyからタスクを登録する
 func (h *TaskHandler) CreateTaskHandler(c echo.Context) error {
-	var task domain.Task
+	var task models.Task
 	// HTTPリクエストBody（JSON）を domain.Task 構造体に変換している
 	if err := c.Bind(&task); err != nil {
 		return c.JSON(http.StatusBadRequest, "invalid request body")
@@ -65,12 +65,12 @@ func (h *TaskHandler) UpdateTaskHandler(c echo.Context) error {
 		return c.JSON(http.StatusBadRequest, map[string]string{"error": "invalid task id"})
 	}
 
-	var task domain.Task
+	var task models.Task
 	if err := c.Bind(&task); err != nil {
 		return c.JSON(http.StatusBadRequest, map[string]string{"error": "invalid request body"})
 	}
 	task.ID = id
-	if err := h.usecase.UpdateTask(&task); err != nil {
+	if err := h.usecase.UpdateTask(task.ID,task.IsDone); err != nil {
 		return c.JSON(http.StatusInternalServerError, map[string]string{"error": "failed to update task"})
 	}
 	return c.JSON(http.StatusOK, task)

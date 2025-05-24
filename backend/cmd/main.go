@@ -4,6 +4,7 @@ import (
 	"log"
 
 	"github.com/labstack/echo/v4"
+	"github.com/labstack/echo/v4/middleware"
 	"github.com/sawada-naoya/todo/backend/internal/router"
 	"github.com/sawada-naoya/todo/backend/internal/wire"
 )
@@ -11,6 +12,7 @@ import (
 func main() {
 	// Echoインスタンスを生成
 	e := echo.New()
+	e.Use(middleware.CORS())
 
 	// Wireを使って依存関係を注入し、*handler.TaskHandler を取得する
 	// Wireにより、main関数では1行で依存注入されたTaskHandlerを取得できる

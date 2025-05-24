@@ -6,7 +6,7 @@ import (
 )
 
 // InitRouterは全ルーティングを定義するエントリーポイント
-// handler層（DI済み）を受け取り、Echoにルーティングをバインドする
+// handler層（DI済み）を受け取り、Echoの「内部にあるルーティングマップ（=経路表）」に、URLとハンドラ関数の組み合わせを「登録（バインド）」する
 func InitRouter(e *echo.Echo, h *handler.TaskHandler) {
 	// タスク一覧取得
 	e.GET("/tasks", h.GetAllTasksHandler)
@@ -15,7 +15,7 @@ func InitRouter(e *echo.Echo, h *handler.TaskHandler) {
 	// タスク登録
 	e.POST("/tasks", h.CreateTaskHandler)
 	// タスク更新
-	e.PUT("/tasks/:id", h.UpdateTaskHandler)
+	e.PATCH("/tasks/:id", h.UpdateTaskHandler)
 	// タスク削除
 	e.DELETE("/tasks/:id", h.DeleteTaskHandler)
 }

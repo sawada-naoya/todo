@@ -4,6 +4,8 @@ import (
 	"database/sql"
 	"fmt"
 	"os"
+
+	_ "github.com/go-sql-driver/mysql" // MySQLドライバをインポート
 )
 
 // NewMySQL は、MySQLへの接続用 *sql.DB を生成する初期化関数
@@ -14,13 +16,14 @@ import (
 // 接続情報は Docker や環境変数経由で注入された値を os.Getenv で取得し、DSN (Data Source Name) を組み立てて接続する
 func NewMySQL() (*sql.DB, error) {
 	dsn := fmt.Sprintf(
-				"%s:%s@tcp(%s:%s)/%s?parseTime=true",
-				// NOTE: docker-composeで環境変数が設定されているので、.envファイルがなくても動く
-				os.Getenv("DB_USER"),
-				os.Getenv("DB_PASSWORD"),
-				os.Getenv("DB_HOST"),
-				os.Getenv("DB_PORT"),
-				os.Getenv("DB_NAME"),
+		// DBに渡す文字を utf8mb4 にして、絵文字などの全Unicode文字を扱えるようにする
+		"%s:%s@tcp(%s:%s)/%s?parseTime=true&charset=utf8mb4&collation=utf8mb4_general_ci",
+		// NOTE: docker-composeで環境変数が設定されているので、.envファイルがなくても動く
+		os.Getenv("DB_USER"),
+		os.Getenv("DB_PASSWORD"),
+		os.Getenv("DB_HOST"),
+		os.Getenv("DB_PORT"),
+		os.Getenv("DB_NAME"),
 	)
 
 	db, err := sql.Open("mysql", dsn)
